@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Trái Tim Quay 360°</title>
+  <style>
+    body { margin: 0; background: black:#404040#; overflow: hidden; }
+    canvas { display: block; }
+    .center-text {
+      position: absolute;
+      top: 5%;
+      width: 100%;
+      text-align: center;
+      font-size:30px;
+      font-weight: bold;
+      color: #ff9fd4;
+      text-shadow: 0 0 15px #ff55aa, 0 0 30px #ff0080;
+    }
+    .ring-text {
+      position: absolute;
+      bottom: 5%;
+      width: 100%;
+      text-align: center;
+      font-size: 22px;
+      color: #00ffff;
+      animation: spin 20s linear infinite;
+      text-shadow: 0 0 15px #00ccff, 0 0 30px #00ffff;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style> 
+</head>
+<body>
+  <div class="font-family:Courier">💖 Em Yêu Anh 💖</div>
+  <div class="font-family:Courier">🌕 Có anh là điều tuyệt vời nhất với em 🌸</div>
+
+  <!-- Nhạc nền -->
+  <audio id="bg-music" autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0d3c0a221d.mp3?filename=lighters.mp3" type="audio/mp3">
+  </audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.min.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Tạo trái tim bằng particles
+    const particles = new THREE.Group();
+    const particleCount = 3000;
+
+    function heartShape(t) {
+      const x = 16 * Math.pow(Math.sin(t), 3);
+      const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+      return { x, y };
+    }
+
+    for (let i = 0; i < particleCount; i++) {
+      const t = Math.random() * Math.PI * 2;
+      const { x, y } = heartShape(t);
+      const geometry = new THREE.SphereGeometry(0.08, 6, 6);
+      const material = new THREE.MeshBasicMaterial({ color: new THREE.Color(`hsl(${Math.random()*360},100%,70%)`) });
+      const particle = new THREE.Mesh(geometry, material);
+      particle.position.set(x/2, y/2, (Math.random() - 0.5) * 8);
+      particles.add(particle);
+    }
+
+    scene.add(particles);
+    camera.position.z = 40;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      particles.rotation.y += 0.01;
+      particles.rotation.x += 0.005;
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Nếu autoplay bị chặn, phát khi user click
+    document.body.addEventListener("click", () => {
+      const music = document.getElementById("bg-music");
+      music.play();
+    });
+  </script>
+</body>
+</html>
