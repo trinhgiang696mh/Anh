@@ -1,2 +1,99 @@
-# Anh
-Trung thu
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quà Trung Thu</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: radial-gradient(circle at center, #000010, #000000);
+      color: white;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+    }
+    canvas {
+      display: block;
+    }
+    .center-text {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 32px;
+      font-weight: bold;
+      color: #ff9fd4;
+      text-shadow: 0 0 15px #ff55aa, 0 0 30px #ff0080;
+    }
+    .text-ring {
+      position: absolute;
+      width: 100%;
+      top: 70%;
+      text-align: center;
+      font-size: 22px;
+      color: #fff;
+      white-space: nowrap;
+      animation: spin 12s linear infinite;
+      text-shadow: 0 0 10px #00ffff, 0 0 20px #00ccff;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="heartCanvas"></canvas>
+  <div class="center-text">💖 Em yêu Anh 💖</div>
+  <div class="text-ring">🌕 Trung Thu này có em rồi đừng buồn nữa nhé , em ở đây 🌸</div>
+
+  <script>
+    const canvas = document.getElementById("heartCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const numParticles = 1500;
+
+    function heartShape(t) {
+      const x = 16 * Math.pow(Math.sin(t), 3);
+      const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+      return { x, y };
+    }
+
+    for (let i = 0; i < numParticles; i++) {
+      const t = Math.random() * Math.PI * 2;
+      const { x, y } = heartShape(t);
+      particles.push({
+        x: canvas.width / 2 + x * 20,
+        y: canvas.height / 2 - y * 20,
+        r: Math.random() * 2 + 1,
+        dx: (Math.random() - 0.5) * 0.4,
+        dy: (Math.random() - 0.5) * 0.4,
+        color: `hsl(${Math.random() * 360},100%,70%)`
+      });
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let p of particles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
+          const t = Math.random() * Math.PI * 2;
+          const { x, y } = heartShape(t);
+          p.x = canvas.width / 2 + x * 20;
+          p.y = canvas.height / 2 - y * 20;
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
